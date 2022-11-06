@@ -179,6 +179,25 @@
       if (version[0] < ltMajor && version[1] < minMinor || version[0] === minMajor && version[1] === minMinor && version[2] < minPatch || version[0] >= maxMajor) {
         throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
       }
+    },
+    // 获取当前页面最大的可用z-index值
+    getAvailableMaxZIndex: function getAvailableMaxZIndex() {
+      var allElements = document.querySelectorAll("*");
+      var zIndexArray = [];
+      allElements.forEach(function (item) {
+        var itemZIndex = Number(window.getComputedStyle(item, null).getPropertyValue("z-index"));
+
+        if (itemZIndex) {
+          zIndexArray.push(itemZIndex);
+        }
+      });
+      var maxZIndex = 0;
+
+      if (zIndexArray.length) {
+        maxZIndex = Math.max.apply(Math, zIndexArray);
+      }
+
+      return maxZIndex + 1;
     }
   };
   Util.jQueryDetection();

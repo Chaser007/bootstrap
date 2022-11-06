@@ -231,6 +231,25 @@
       if (version[0] < ltMajor && version[1] < minMinor || version[0] === minMajor && version[1] === minMinor && version[2] < minPatch || version[0] >= maxMajor) {
         throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
       }
+    },
+    // 获取当前页面最大的可用z-index值
+    getAvailableMaxZIndex: function getAvailableMaxZIndex() {
+      var allElements = document.querySelectorAll("*");
+      var zIndexArray = [];
+      allElements.forEach(function (item) {
+        var itemZIndex = Number(window.getComputedStyle(item, null).getPropertyValue("z-index"));
+
+        if (itemZIndex) {
+          zIndexArray.push(itemZIndex);
+        }
+      });
+      var maxZIndex = 0;
+
+      if (zIndexArray.length) {
+        maxZIndex = Math.max.apply(Math, zIndexArray);
+      }
+
+      return maxZIndex + 1;
     }
   };
   Util.jQueryDetection();
@@ -2256,7 +2275,11 @@
 
       this._element.setAttribute('aria-modal', true);
 
-      this._element.setAttribute('role', 'dialog');
+      this._element.setAttribute('role', 'dialog'); // 为了支持嵌套modal
+
+
+      var maxZIndex = Util.getAvailableMaxZIndex();
+      this._element.style.zIndex = maxZIndex;
 
       if ($__default["default"](this._dialog).hasClass(CLASS_NAME_SCROLLABLE) && modalBody) {
         modalBody.scrollTop = 0;
@@ -2374,7 +2397,10 @@
 
       if (this._isShown && this._config.backdrop) {
         this._backdrop = document.createElement('div');
-        this._backdrop.className = CLASS_NAME_BACKDROP;
+        this._backdrop.className = CLASS_NAME_BACKDROP; // 为了支持嵌套modal
+
+        var maxZIndex = Util.getAvailableMaxZIndex();
+        this._backdrop.style.zIndex = maxZIndex;
 
         if (animate) {
           this._backdrop.classList.add(animate);

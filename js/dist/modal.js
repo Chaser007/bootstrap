@@ -300,7 +300,11 @@
 
       this._element.setAttribute('aria-modal', true);
 
-      this._element.setAttribute('role', 'dialog');
+      this._element.setAttribute('role', 'dialog'); // 为了支持嵌套modal
+
+
+      var maxZIndex = Util__default["default"].getAvailableMaxZIndex();
+      this._element.style.zIndex = maxZIndex;
 
       if ($__default["default"](this._dialog).hasClass(CLASS_NAME_SCROLLABLE) && modalBody) {
         modalBody.scrollTop = 0;
@@ -418,7 +422,10 @@
 
       if (this._isShown && this._config.backdrop) {
         this._backdrop = document.createElement('div');
-        this._backdrop.className = CLASS_NAME_BACKDROP;
+        this._backdrop.className = CLASS_NAME_BACKDROP; // 为了支持嵌套modal
+
+        var maxZIndex = Util__default["default"].getAvailableMaxZIndex();
+        this._backdrop.style.zIndex = maxZIndex;
 
         if (animate) {
           this._backdrop.classList.add(animate);
