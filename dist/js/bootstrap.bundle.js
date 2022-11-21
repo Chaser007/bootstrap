@@ -231,9 +231,10 @@
         throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
       }
     },
-    // 获取当前页面最大的可用z-index值
-    getAvailableMaxZIndex: function getAvailableMaxZIndex() {
-      var allElements = document.querySelectorAll("*");
+    // 获取当前页面或selector选中元素中最大的可用z-index值
+    getAvailableMaxZIndex: function getAvailableMaxZIndex(selector) {
+      selector = selector ? selector : "*";
+      var allElements = document.querySelectorAll(selector);
       var zIndexArray = [];
       allElements.forEach(function (item) {
         var itemZIndex = Number(window.getComputedStyle(item, null).getPropertyValue("z-index"));
@@ -4676,7 +4677,9 @@
   var SELECTOR_DATA_TOGGLE$1 = '[data-toggle="modal"]';
   var SELECTOR_DATA_DISMISS$1 = '[data-dismiss="modal"]';
   var SELECTOR_FIXED_CONTENT = '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top';
-  var SELECTOR_STICKY_CONTENT = '.sticky-top';
+  var SELECTOR_STICKY_CONTENT = '.sticky-top'; // 所有显示的模态框与背景的选择器
+
+  var SELECTOR_TOP_MODAL = ".modal." + CLASS_NAME_SHOW$4 + ", .modal-backdrop." + CLASS_NAME_SHOW$4;
   var Default$4 = {
     backdrop: true,
     keyboard: true,
@@ -4890,11 +4893,12 @@
 
       this._element.setAttribute('aria-modal', true);
 
-      this._element.setAttribute('role', 'dialog'); // 为了支持嵌套modal
+      this._element.setAttribute('role', 'dialog'); // 为了支持嵌套modal, 后打开的模态框应显示在已打开的最上层
 
 
-      var maxZIndex = Util.getAvailableMaxZIndex();
-      this._element.style.zIndex = maxZIndex;
+      var maxZIndex = Util.getAvailableMaxZIndex(SELECTOR_TOP_MODAL); // bootstrap 中 .modal 默认的 z-index 起始值为1050
+
+      this._element.style.zIndex = maxZIndex > 1050 ? maxZIndex : 1050;
 
       if ($__default["default"](this._dialog).hasClass(CLASS_NAME_SCROLLABLE) && modalBody) {
         modalBody.scrollTop = 0;
@@ -5012,10 +5016,11 @@
 
       if (this._isShown && this._config.backdrop) {
         this._backdrop = document.createElement('div');
-        this._backdrop.className = CLASS_NAME_BACKDROP; // 为了支持嵌套modal
+        this._backdrop.className = CLASS_NAME_BACKDROP; // 为了支持嵌套modal, 后打开的模态框应显示在已打开的最上层
 
-        var maxZIndex = Util.getAvailableMaxZIndex();
-        this._backdrop.style.zIndex = maxZIndex;
+        var maxZIndex = Util.getAvailableMaxZIndex(SELECTOR_TOP_MODAL); // bootstrap 中 .modal-backdrop 默认的 z-index 起始值为1040
+
+        this._backdrop.style.zIndex = maxZIndex > 1040 ? maxZIndex : 1040;
 
         if (animate) {
           this._backdrop.classList.add(animate);

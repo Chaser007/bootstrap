@@ -48,6 +48,9 @@ const SELECTOR_DATA_DISMISS = '[data-dismiss="modal"]'
 const SELECTOR_FIXED_CONTENT = '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'
 const SELECTOR_STICKY_CONTENT = '.sticky-top'
 
+// 所有显示的模态框与背景的选择器
+const SELECTOR_TOP_MODAL = `.modal.${CLASS_NAME_SHOW}, .modal-backdrop.${CLASS_NAME_SHOW}`
+
 const Default = {
   backdrop: true,
   keyboard: true,
@@ -269,9 +272,10 @@ class Modal {
     this._element.setAttribute('aria-modal', true)
     this._element.setAttribute('role', 'dialog')
 
-    // 为了支持嵌套modal
-    const maxZIndex = Util.getAvailableMaxZIndex();
-    this._element.style.zIndex = maxZIndex;
+    // 为了支持嵌套modal, 后打开的模态框应显示在已打开的最上层
+    const maxZIndex = Util.getAvailableMaxZIndex(SELECTOR_TOP_MODAL);
+    // bootstrap 中 .modal 默认的 z-index 起始值为1050
+    this._element.style.zIndex = maxZIndex > 1050 ? maxZIndex : 1050;
 
     if ($(this._dialog).hasClass(CLASS_NAME_SCROLLABLE) && modalBody) {
       modalBody.scrollTop = 0
@@ -377,9 +381,10 @@ class Modal {
       this._backdrop = document.createElement('div')
       this._backdrop.className = CLASS_NAME_BACKDROP
 
-      // 为了支持嵌套modal
-      const maxZIndex = Util.getAvailableMaxZIndex();
-      this._backdrop.style.zIndex = maxZIndex;
+      // 为了支持嵌套modal, 后打开的模态框应显示在已打开的最上层
+      const maxZIndex = Util.getAvailableMaxZIndex(SELECTOR_TOP_MODAL);
+      // bootstrap 中 .modal-backdrop 默认的 z-index 起始值为1040
+      this._backdrop.style.zIndex = maxZIndex > 1040 ? maxZIndex : 1040;
 
       if (animate) {
         this._backdrop.classList.add(animate)

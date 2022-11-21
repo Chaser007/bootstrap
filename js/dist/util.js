@@ -180,9 +180,10 @@
         throw new Error('Bootstrap\'s JavaScript requires at least jQuery v1.9.1 but less than v4.0.0');
       }
     },
-    // 获取当前页面最大的可用z-index值
-    getAvailableMaxZIndex: function getAvailableMaxZIndex() {
-      var allElements = document.querySelectorAll("*");
+    // 获取当前页面或selector选中元素中最大的可用z-index值
+    getAvailableMaxZIndex: function getAvailableMaxZIndex(selector) {
+      selector = selector ? selector : "*";
+      var allElements = document.querySelectorAll(selector);
       var zIndexArray = [];
       allElements.forEach(function (item) {
         var itemZIndex = Number(window.getComputedStyle(item, null).getPropertyValue("z-index"));

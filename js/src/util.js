@@ -188,9 +188,10 @@ const Util = {
     }
   },
 
-  // 获取当前页面最大的可用z-index值
-  getAvailableMaxZIndex () {
-    const allElements = document.querySelectorAll("*");
+  // 获取当前页面或selector选中元素中最大的可用z-index值
+  getAvailableMaxZIndex (selector) {
+    selector = selector ? selector : "*";
+    const allElements = document.querySelectorAll(selector);
     const zIndexArray = [];
     allElements.forEach((item) => {
       const itemZIndex = Number(window.getComputedStyle(item, null).getPropertyValue("z-index"));
